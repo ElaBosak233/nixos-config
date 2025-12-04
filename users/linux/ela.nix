@@ -9,8 +9,40 @@
   };
 
   home-manager.users.ela = { config, pkgs, ... }: {
+    xdg.userDirs = {
+      enable = true;
+      createDirectories = true;
 
-    home.stateVersion = "25.11";
+      desktop = "Desktop";
+      documents = "Documents";
+      download = "Downloads";
+      music = "Music";
+      pictures = "Pictures";
+      videos = "Videos";
+      templates = "Templates";
+      publicShare = "Public";
+    };
+
+    xdg.configFile."user-dirs.dirs".force = true;
+
+    dconf.settings = {
+      "org/gnome/shell" = {
+        enabled-extensions = [
+          "dash-to-dock@micxgx.gmail.com"
+          "blur-my-shell@aunetx"
+          "just-perfection@just-perfection"
+        ];
+      };
+    };
+
+    fonts = {
+      fontconfig = {
+        enable = true;
+        defaultFonts = {
+          monospace = [ "FiraCode" ];
+        };
+      };
+    };
 
     home.packages = with pkgs; [
       vlc
@@ -20,33 +52,8 @@
       github-desktop
     ];
 
-    home.file.".gnupg/pubkey-ela.asc".text = ''
-      -----BEGIN PGP PUBLIC KEY BLOCK-----
-
-      mDMEaBCipxYJKwYBBAHaRw8BAQdA1EKymTap5e7kp1GDunMBAvNunYgaD5ytlk/A
-      M8RiD9u0D0VsYSA8aUBlMjMuZGV2PoiTBBMWCgA7FiEELqrEhYn+xNJ8PkKi5mMk
-      m2f7jaEFAmgQoqcCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQ5mMk
-      m2f7jaGdkwD/bgnEd4hnD/oB0VYYKhU+bUCMp5I2t5Bnnd+HIq4AvrUBAMUJcf/D
-      T6eU4HeRpizoqDKD3BigFg0KAqtI6DASxTsOuDgEaBCipxIKKwYBBAGXVQEFAQEH
-      QK1vsyot3tFSY0k+RoGaorVXh3aSMT5YETz+wMQq7JAmAwEIB4h4BBgWCgAgFiEE
-      LqrEhYn+xNJ8PkKi5mMkm2f7jaEFAmgQoqcCGwwACgkQ5mMkm2f7jaGOXQEAmO4d
-      22pSdCjp8KWZhMytrsJhE5Aeknt9lL1RiW8+W8cBAOQkX4xi1CjYv9vc0ezwJYX4
-      BUfpu+suS07YZgJ0rXAE
-      =Jp8S
-      -----END PGP PUBLIC KEY BLOCK-----
-    '';
-
-    programs.gpg = {
-      enable = true;
-      publicKeys = [
-        {
-          source = "${config.home.homeDirectory}/.gnupg/pubkey-ela.asc";
-          trust = "ultimate";
-        }
-      ];
-    };
-
     programs.starship.enable = true;
+    programs.gpg.enable = true;
 
     programs.git = {
       enable = true;
@@ -59,16 +66,10 @@
       };
     };
 
-    programs.vscode = {
-      enable = true;
-      profiles.default.extensions = with pkgs.vscode-extensions; [
-        ms-python.python
-        rust-lang.rust-analyzer
-      ];
-    };
-
     home.sessionPath = [
       "$HOME/.local/bin"
     ];
+
+    home.stateVersion = "25.11";
   };
 }
