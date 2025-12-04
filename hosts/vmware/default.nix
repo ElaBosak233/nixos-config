@@ -17,9 +17,9 @@
       ../../modules/services/docker.nix
       ../../modules/services/k3s.nix
 
+      ../../modules/programs/dev
+      ../../modules/programs/clash.nix
       ../../modules/programs/fonts.nix
-      ../../modules/programs/python.nix
-      ../../modules/programs/dev.nix
       ../../modules/programs/cli.nix
       ../../modules/programs/shell.nix
 

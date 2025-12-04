@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # Enable the X11 windowing system.
@@ -27,4 +27,16 @@
     gnome-extension-manager
     refine
   ];
+
+  home-manager.sharedModules = lib.mkAfter [{
+    dconf.settings = {
+      "org/gnome/shell" = {
+        enabled-extensions = [
+          "dash-to-dock@micxgx.gmail.com"
+          "blur-my-shell@aunetx"
+          "just-perfection@just-perfection"
+        ];
+      };
+    };
+  }];
 }

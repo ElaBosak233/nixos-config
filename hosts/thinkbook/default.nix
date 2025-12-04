@@ -13,9 +13,9 @@
       ../../modules/services/docker.nix
       ../../modules/services/k3s.nix
 
+      ../../modules/programs/dev
+      ../../modules/programs/clash.nix
       ../../modules/programs/fonts.nix
-      ../../modules/programs/python.nix
-      ../../modules/programs/dev.nix
       ../../modules/programs/cli.nix
       ../../modules/programs/shell.nix
 
@@ -53,8 +53,7 @@
   # Enable touchpad support (enabled default in most desktopManager).
   services.xserver.libinput.enable = true;
 
-  environment.systemPackages = with pkgs; lib.mkAfter [
-  ];
+  environment.systemPackages = with pkgs; lib.mkAfter [];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
