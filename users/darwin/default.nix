@@ -1,0 +1,7 @@
+{ lib, ... }:
+
+{
+  imports = [
+    ./ela.nix
+  ];
+}

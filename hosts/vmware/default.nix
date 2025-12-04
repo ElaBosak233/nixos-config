@@ -2,14 +2,12 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, rust-overlay, ... }:
+{ config, pkgs, ... }:
 
 {
   imports =
     [
-      ../../modules/system/common.nix
       ../../modules/system/linux.nix
-      ../../modules/system/home-manager.nix
 
       ../../modules/desktop/gnome.nix
       ../../modules/desktop/audio.nix
@@ -36,10 +34,6 @@
 
   networking.hostName = "vmware"; # Define your hostname.
 
-  nixpkgs.overlays = [
-    rust-overlay.overlays.default
-  ];
-
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
@@ -53,8 +47,9 @@
   services.xserver.videoDrivers = [ "vmware" ];
   virtualisation.vmware.guest.enable = true;
 
-  environment.systemPackages = with pkgs; lib.mkAfter [
-  ];
+  security.sudo.wheelNeedsPassword = false;
+
+  environment.systemPackages = with pkgs; lib.mkAfter [];
 
   services.openssh.enable = true;
   networking.firewall.enable = false;

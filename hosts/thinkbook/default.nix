@@ -1,11 +1,9 @@
-{ config, pkgs, rust-overlay, ... }:
+{ config, pkgs, ... }:
 
 {
   imports =
     [
-      ../../modules/system/common.nix
       ../../modules/system/linux.nix
-      ../../modules/system/home-manager.nix
 
       ../../modules/desktop/plasma.nix
       ../../modules/desktop/audio.nix
@@ -39,10 +37,6 @@
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  nixpkgs.overlays = [
-    rust-overlay.overlays.default
-  ];
 
   # Configure keymap in X11
   services.xserver.xkb = {

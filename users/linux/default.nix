@@ -25,7 +25,5 @@
     home.sessionPath = [
       "$HOME/.local/bin"
     ];
-
-    home.stateVersion = "25.11";
   }];
 }

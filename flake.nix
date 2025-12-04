@@ -19,58 +19,31 @@
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, wsl, darwin, rust-overlay, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, wsl, darwin, ... }@inputs:
   let
-    systems = [
-      "x86_64-linux"
-      "aarch64-linux"
-      "aarch64-darwin"
-      "x86_64-darwin"
+    overlays = [
+      inputs.rust-overlay.overlays.default
     ];
 
-    forAllSystems = f: builtins.listToAttrs (map (system: {
-      name = system;
-      value = f system;
-    }) systems);
+    mkSystem = import ./lib/mksystem.nix {
+      inherit overlays nixpkgs inputs;
+    };
 
   in {
     ####################################################################################
     # NixOS Hosts
     ####################################################################################
     nixosConfigurations = {
-      thinkbook = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = {
-          inherit nixpkgs nixpkgs-unstable home-manager rust-overlay;
-        };
-        modules = [
-          ./hosts/thinkbook
-        ];
-      };
-
-      vmware = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = {
-          inherit nixpkgs nixpkgs-unstable home-manager rust-overlay;
-        };
-        modules = [
-          ./hosts/vmware
-        ];
-      };
+      thinkbook = mkSystem "thinkbook" {};
+      vmware = mkSystem "vmware" {};
     };
 
     ####################################################################################
     # macOS Hosts (nix-darwin)
     ####################################################################################
     darwinConfigurations = {
-      macbook = darwin.lib.darwinSystem {
-        system = "aarch64-darwin";
-        specialArgs = {
-          inherit nixpkgs nixpkgs-unstable;
-        };
-        modules = [
-          ./hosts/macbook
-        ];
+      macbook = mkSystem "macbook" {
+        darwin = true;
       };
     };
 
@@ -78,25 +51,12 @@
     # WSL / Linux without NixOS
     ####################################################################################
     homeConfigurations = {
-      ela-wsl = home-manager.lib.homeManagerConfiguration {
+      wsl = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs { system = "x86_64-linux"; };
         modules = [
           ./hosts/wsl-dev/default.nix
         ];
       };
     };
-
-    ####################################################################################
-    # Packages & devShells
-    ####################################################################################
-    # packages = forAllSystems (system:
-    #   let pkgs = import nixpkgs { inherit system; };
-    #   in import ./pkgs { inherit pkgs; }
-    # );
-
-    # devShells = forAllSystems (system:
-    #   let pkgs = import nixpkgs { inherit system; };
-    #   in import ./pkgs/devshells { inherit pkgs; }
-    # );
   };
 }
