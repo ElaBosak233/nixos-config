@@ -7,19 +7,19 @@
 {
   imports =
     [
-      ../../modules/system/linux.nix
+      ../../modules/linux/common.nix
 
-      ../../modules/desktop/gnome.nix
-      ../../modules/desktop/audio.nix
+      ../../modules/linux/desktop/gnome.nix
+      ../../modules/linux/desktop/audio.nix
 
-      ../../modules/services/docker.nix
-      ../../modules/services/k3s.nix
+      ../../modules/linux/services/docker.nix
+      ../../modules/linux/services/k3s.nix
 
-      ../../modules/programs/dev
-      ../../modules/programs/clash.nix
-      ../../modules/programs/fonts.nix
-      ../../modules/programs/cli.nix
-      ../../modules/programs/shell.nix
+      ../../modules/linux/programs/dev
+      ../../modules/linux/programs/clash.nix
+      ../../modules/linux/programs/fonts.nix
+      ../../modules/linux/programs/cli.nix
+      ../../modules/linux/programs/shell.nix
 
       ../../users/linux
 
