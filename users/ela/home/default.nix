@@ -18,6 +18,7 @@
     google-chrome
     vscode
     github-desktop
+    wechat-uos
   ];
 
   programs.starship.enable = true;
@@ -25,6 +26,7 @@
 
   programs.git = {
     enable = true;
+    lfs.enable = true;
     settings = {
       user.name = "Ela";
       user.email = "i@e23.dev";

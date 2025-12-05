@@ -8,6 +8,8 @@
       ../../modules/desktop/plasma.nix
       ../../modules/desktop/audio.nix
 
+      ../../modules/misc/fonts.nix
+
       ../../modules/services/docker.nix
       ../../modules/services/k3s.nix
 
