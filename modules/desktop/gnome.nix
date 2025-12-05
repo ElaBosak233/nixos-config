@@ -1,6 +1,6 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, system, ... }:
 
-{
+lib.mkIf (system == "nixos") {
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.displayManager.gdm.enable = true;
@@ -27,16 +27,4 @@
     gnome-extension-manager
     refine
   ];
-
-  home-manager.sharedModules = lib.mkAfter [{
-    dconf.settings = {
-      "org/gnome/shell" = {
-        enabled-extensions = [
-          "dash-to-dock@micxgx.gmail.com"
-          "blur-my-shell@aunetx"
-          "just-perfection@just-perfection"
-        ];
-      };
-    };
-  }];
 }

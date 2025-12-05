@@ -1,0 +1,7 @@
+{ lib, system, ... }:
+
+{
+  imports = [
+    ./home
+  ];
+}

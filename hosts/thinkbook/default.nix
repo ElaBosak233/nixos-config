@@ -3,21 +3,17 @@
 {
   imports =
     [
-      ../../modules/linux/common.nix
+      ../../modules/system/base.nix
 
-      ../../modules/linux/desktop/plasma.nix
-      ../../modules/linux/desktop/audio.nix
+      ../../modules/desktop/plasma.nix
+      ../../modules/desktop/audio.nix
 
-      ../../modules/linux/services/docker.nix
-      ../../modules/linux/services/k3s.nix
+      ../../modules/services/docker.nix
+      ../../modules/services/k3s.nix
 
-      ../../modules/linux/programs/dev
-      ../../modules/linux/programs/clash.nix
-      ../../modules/linux/programs/fonts.nix
-      ../../modules/linux/programs/cli.nix
-      ../../modules/linux/programs/shell.nix
-
-      ../../users/linux
+      ../../modules/programs/cli.nix
+      ../../modules/programs/shell.nix
+      ../../modules/programs/clash.nix
 
       ./i18n.nix
       ./hardware.nix

@@ -1,10 +1,8 @@
 { lib, config, pkgs, ... }:
 
-with lib;
-
 {
-  options.python.extraPackages = mkOption {
-    type = types.functionTo (types.listOf types.package);
+  options.python.extraPackages = lib.mkOption {
+    type = lib.types.functionTo (lib.types.listOf lib.types.package);
     default = ps: with ps; [
       pycryptodome
       pwntools
@@ -17,8 +15,9 @@ with lib;
   };
 
   config = {
-    environment.systemPackages = lib.mkAfter [
-      (pkgs.python3.withPackages (ps: config.python.extraPackages ps))
+    home.packages = with pkgs; lib.mkAfter [
+      uv
+      (python3.withPackages (ps: config.python.extraPackages ps))
     ];
   };
 }

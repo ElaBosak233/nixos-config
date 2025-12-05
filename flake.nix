@@ -34,8 +34,14 @@
     # NixOS Hosts
     ####################################################################################
     nixosConfigurations = {
-      thinkbook = mkSystem "thinkbook" {};
-      vmware = mkSystem "vmware" {};
+      thinkbook = mkSystem "thinkbook" {
+        system = "nixos";
+        roles = [ "workstation" ];
+      };
+      vmware = mkSystem "vmware" {
+        system = "nixos";
+        roles = [ "virtual-machine" ];
+      };
     };
 
     ####################################################################################
@@ -43,7 +49,8 @@
     ####################################################################################
     darwinConfigurations = {
       macbook = mkSystem "macbook" {
-        darwin = true;
+        system = "darwin";
+        roles = [ "workstation" ];
       };
     };
 

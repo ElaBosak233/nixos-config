@@ -1,67 +1,96 @@
-# This function creates a NixOS system based on our VM setup for a
-# particular architecture.
+# lib/mksystem.nix
 { nixpkgs, overlays, inputs }:
 
 name:
+
 {
-  darwin ? false,
-  wsl ? false
+  system ? "nixos",       # "nixos" | "darwin" | "wsl"
+  roles ? [],             # list of roles for this host
+  extraModules ? [],
+  ...
 }:
 
 let
-  # True if this is a WSL system.
-  isWSL = wsl;
+  # Platform-specific system builder
+  systemFunc =
+    if system == "darwin"
+    then inputs.darwin.lib.darwinSystem
+    else nixpkgs.lib.nixosSystem;
 
-  # True if Linux, which is a heuristic for not being Darwin.
-  isLinux = !darwin && !isWSL;
+  # home-manager module types based on system
+  homeManagerModules =
+    if system == "darwin"
+    then inputs.home-manager.darwinModules
+    else inputs.home-manager.nixosModules;
 
-  # The config files for this system.
+  # Path to host folder
   hostConfig = ../hosts/${name};
-
-  # NixOS vs nix-darwin functionst
-  systemFunc = if darwin then inputs.darwin.lib.darwinSystem else nixpkgs.lib.nixosSystem;
-  home-manager = if darwin then inputs.home-manager.darwinModules else inputs.home-manager.nixosModules;
+  userOSConfig = ../users/ela/system/${system}.nix;
 
 in systemFunc rec {
+  inherit system;
+
   modules = [
-    # Apply our overlays. Overlays are keyed by system type so we have
-    # to go through and apply our system type. We do this first so
-    # the overlays are available globally.
+
+    ###################################################################
+    # Global overlays
+    ###################################################################
     { nixpkgs.overlays = overlays; }
 
-    { 
-      nix = {
-        settings = {
-          substituters = [ "https://mirror.sjtu.edu.cn/nix-channels/store" ];
-          experimental-features = [ "nix-command" "flakes" ];
-        };
+    ###################################################################
+    # Common Nix settings
+    ###################################################################
+    {
+      nix.settings = {
+        substituters = [
+          "https://mirror.sjtu.edu.cn/nix-channels/store"
+        ];
+        experimental-features = [ "nix-command" "flakes" ];
       };
-
-      # Allow unfree packages.
       nixpkgs.config.allowUnfree = true;
     }
 
-    # Bring in WSL if this is a WSL build
-    (if isWSL then inputs.wsl.nixosModules.wsl else {})
+    ###################################################################
+    # WSL ONLY when system == "wsl"
+    # ###################################################################
+    # (nixpkgs.lib.mkIf (system == "wsl") {
+    #   imports = inputs.wsl.nixosModules;
+    # })
 
+    ###################################################################
+    # Host-specific settings
+    ###################################################################
     hostConfig
-    home-manager.home-manager {
+    userOSConfig
+
+    ###################################################################
+    # Home-manager integrated as module
+    ###################################################################
+    homeManagerModules.home-manager {
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
-
-      home-manager.sharedModules = nixpkgs.lib.mkAfter [{
-        home.stateVersion = "25.11";
-      }];
+      home-manager.users.ela = import ../users/ela/default.nix;
+      home-manager.extraSpecialArgs = {
+        system = system;
+        roles = roles;
+        inputs = inputs;
+      };
+      home-manager.sharedModules = [
+        { home.stateVersion = "25.11"; }
+      ];
     }
 
-    # We expose some extra arguments so that our modules can parameterize
-    # better based on these values.
+    ###################################################################
+    # Expose custom arguments to **all** modules
+    ###################################################################
     {
       config._module.args = {
         currentHost = name;
-        isWSL = isWSL;
+        system = system;
+        roles = roles;
         inputs = inputs;
       };
     }
-  ];
+
+  ] ++ extraModules;
 }
